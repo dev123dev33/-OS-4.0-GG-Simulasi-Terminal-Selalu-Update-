@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>OS 4.0 GG – V3 X2 (Model 4.0)</title>
+  <style>
+    /* Desain OS 4.0 – V3 X2 (Model 4.0): UI modern, responsif, dan ditingkatkan */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: linear-gradient(135deg, #101010, #1f1f1f);
+      font-family: 'Roboto Mono', monospace;
+      color: #c0c0c0;
+    }
+    #terminal {
+      width: 95%;
+      max-width: 1200px;
+      height: 95%;
+      margin: 2.5% auto;
+      padding: 20px;
+      background: rgba(25,25,25,0.98);
+      border: 3px solid #00ffcc;
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0,255,204,0.5);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    #header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #00ffcc;
+      padding-bottom: 10px;
+    }
+    #header h1 {
+      margin: 0;
+      font-size: 3em;
+      color: #00ffcc;
+    }
+    #header p {
+      margin: 0;
+      font-size: 1.3em;
+      color: #a0a0a0;
+    }
+    #history {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      font-size: 1.1em;
+      white-space: pre-wrap;
+    }
+    .line {
+      margin: 4px 0;
+      word-wrap: break-word;
+    }
+    #command-line {
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #444;
+      padding-top: 10px;
+    }
+    .prompt {
+      margin-right: 10px;
+      color: #00ffcc;
+      font-size: 1.2em;
+    }
+    #cmdInput {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 1.2em;
+      color: #c0c0c0;
+    }
+    ::placeholder {
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal">
+    <div id="header">
+      <h1>OS 4.0 GG</h1>
+      <p>V3 X2 – Model 4.0</p>
+      <div class="feedback">
+        Update besar ini menghadirkan perbaikan bug, optimisasi maksimal, dan UI yang lebih modern.
+      </div>
+    </div>
+    <div id="history">
+      <div class="line">Ketik "help" untuk melihat perintah dasar.</div>
+    </div>
+    <div id="command-line">
+      <span class="prompt">user@os4.0:~$</span>
+      <input type="text" id="cmdInput" autocomplete="off" placeholder="Ketik perintah..." autofocus>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const terminal = document.getElementById('terminal');
+      const historyContainer = document.getElementById('history');
+      const cmdInput = document.getElementById('cmdInput');
+      let commandHistory = [];
+      let historyIndex = 0;
+      const startTime = Date.now();
+      let todoList = [];
+
+      // Fungsi untuk menambahkan baris ke history dan auto-scroll
+      function addLine(text) {
+        if (text !== "") {
+          const line = document.createElement('div');
+          line.className = 'line';
+          line.textContent = text;
+          historyContainer.appendChild(line);
+        }
+        terminal.scrollTop = terminal.scrollHeight;
+      }
+
+      /* --- Fungsi Dasar --- */
+      function changeTheme(color) {
+        document.body.style.color = color;
+        return "Tema teks diubah ke " + color;
+      }
+      function changeBg(color) {
+        document.body.style.background = color;
+        return "Background diubah ke " + color;
+      }
+      function calc(args) {
+        if (args.length < 3) return "Usage: calc [num1] [operator] [num2]";
+        const num1 = parseFloat(args[0]), num2 = parseFloat(args[2]);
+        if (isNaN(num1) || isNaN(num2)) return "Error: masukkan angka yang valid.";
+        let result;
+        switch(args[1]) {
+          case '+': result = num1 + num2; break;
+          case '-': result = num1 - num2; break;
+          case '*': case 'x': result = num1 * num2; break;
+          case '/':
+            if (num2 === 0) return "Error: pembagian dengan nol.";
+            result = num1 / num2; break;
+          default: return "Operator tidak dikenali. Operator yang valid: +, -, *, /";
+        }
+        return "Hasil: " + result;
+      }
+      function ls() { return "bin\netc\nhome\nusr\nvar"; }
+      function showHistory() { return commandHistory.length ? commandHistory.join("\n") : "History kosong."; }
+      function randomNumber() { return Math.floor(Math.random() * 101); }
+      function ping() { return "Pong!"; }
+      function sysinfo() {
+        return "OS: OS 4.0 GG\nBrowser: " + navigator.userAgent +
+               "\nResolusi: " + window.screen.width + "x" + window.screen.height;
+      }
+      function time() { return new Date().toLocaleTimeString(); }
+      function uptime() {
+        const seconds = Math.floor((Date.now() - startTime) / 1000);
+        return "Uptime: " + seconds + " detik";
+      }
+      function fortune() {
+        const quotes = [
+          "Keep pushing your limits!",
+          "Every day is a new opportunity.",
+          "Coding is an art.",
+          "Stay positive and code on!",
+          "Debugging is like being the detective in a crime movie."
+        ];
+        return quotes[Math.floor(Math.random() * quotes.length)];
+      }
+      function reverse(args) {
+        if (!args.length) return "Usage: reverse [teks]";
+        return args.join(" ").split("").reverse().join("");
+      }
+      function joke() {
+        const jokes = [
+          "Kenapa programmer tidak pernah kesepian? Karena mereka selalu punya 'array' teman.",
+          "Seorang programmer masuk ke bar dan memesan kopi, bartender bertanya: 'null pointer atau undefined?'",
+          "Kenapa kucing programmer itu pintar? Karena mereka tahu cara meng-catch error.",
+          "Apa persamaan antara coder dan tukang kebun? Keduanya suka debug.",
+          "Programmer itu seperti ninja: mereka bekerja dalam keheningan."
+        ];
+        return jokes[Math.floor(Math.random() * jokes.length)];
+      }
+
+      // Advanced help text (ditampilkan secara vertikal)
+      const advancedHelpText =
+        "weather    - Info cuaca (wttr.in)\n" +
+        "news       - Berita terkini\n" +
+        "todo       - Todo List (add, list, remove)\n" +
+        "reminder   - Set reminder [detik] [pesan]\n" +
+        "encrypt    - Enkripsi teks\n" +
+        "decrypt    - Dekripsi teks\n" +
+        "translate  - Penerjemahan teks\n" +
+        "battery    - Status baterai\n" +
+        "storage    - Info penyimpanan\n" +
+        "processes  - Daftar proses berjalan\n" +
+        "cpuinfo    - Info CPU detail\n" +
+        "memusage   - Penggunaan memori\n" +
+        "network    - Info jaringan\n" +
+        "disk       - Info disk\n" +
+        "logs       - Log sistem\n" +
+        "monitor    - Monitor sistem\n" +
+        "config     - Konfigurasi sistem\n" +
+        "services   - Layanan berjalan\n" +
+        "backup     - Backup data\n" +
+        "restore    - Pemulihan data\n" +
+        "update     - Update sistem\n" +
+        "shutdown   - Matikan sistem\n" +
+        "reboot     - Restart sistem\n" +
+        "diagnose   - Diagnosa sistem\n" +
+        "changelog  - Tampilkan perubahan versi";
+
+      /* --- Definisi Perintah --- */
+      const commands = {
+        help: function(args) {
+          if (args.length > 0 && (args[0].toLowerCase() === "advanced" || args[0].toLowerCase() === "full")) {
+            return "Perintah Advanced:\n" + advancedHelpText;
+          }
+          return "Perintah Dasar:\n" +
+                 "help         - Tampilkan perintah dasar\n" +
+                 "about        - Info OS\n" +
+                 "version      - Versi OS\n" +
+                 "date         - Tampilkan tanggal\n" +
+                 "time         - Tampilkan waktu\n" +
+                 "calc         - Kalkulator sederhana\n" +
+                 "ls           - List direktori\n" +
+                 "theme        - Ubah warna teks\n" +
+                 "bg           - Ubah background\n" +
+                 "echo         - Tampilkan pesan\n" +
+                 "history      - Tampilkan riwayat perintah\n" +
+                 "clear/cls    - Bersihkan layar\n" +
+                 "credits      - Info pembuat OS\n" +
+                 "reverse      - Membalikkan teks\n" +
+                 "rand         - Angka acak\n" +
+                 "ping         - Uji koneksi\n" +
+                 "sysinfo      - Info sistem\n" +
+                 "fortune      - Kutipan motivasi\n" +
+                 "uptime       - Waktu aktif OS\n" +
+                 "joke         - Tampilkan lelucon\n" +
+                 "apology      - Permintaan maaf dari pengembang\n" +
+                 "changelog    - Tampilkan perubahan versi\n" +
+                 "advanced     - Lihat perintah advanced (ketik 'help advanced')";
+        },
+        about: function() { 
+          return "Simulasi OS berbasis HTML, CSS, dan JavaScript (OS 3.9 GG – V2 X1, Model 3.5).\n" +
+                 "Update besar ini mengintegrasikan perbaikan dan masukan pengguna.\n" +
+                 "Maaf, update baru belum tersedia karena pengembang fokus pada pengembangan AI.";
+        },
+        version: function() { return "OS versi 3.9 GG – V2 X1, Model 3.5"; },
+        date: function() { return new Date().toDateString(); },
+        time: function() { return time(); },
+        calc: function(args) { return calc(args); },
+        ls: function() { return ls(); },
+        theme: function(args) { return args.length ? changeTheme(args[0]) : "Usage: theme [color]"; },
+        bg: function(args) { return args.length ? changeBg(args[0]) : "Usage: bg [color]"; },
+        echo: function(args) { return args.join(" "); },
+        history: function() { return showHistory(); },
+        clear: function() { historyContainer.innerHTML = ""; return ""; },
+        cls: function() { return commands.clear(); },
+        credits: function() { return "Hack dev 2223 credits"; },
+        reverse: function(args) { return reverse(args); },
+        rand: function() { return "Angka acak: " + randomNumber(); },
+        ping: function() { return ping(); },
+        sysinfo: function() { return sysinfo(); },
+        fortune: function() { return fortune(); },
+        uptime: function() { return uptime(); },
+        joke: function() { return joke(); },
+        apology: function() {
+          return "Kami mohon maaf kepada seluruh pengguna.\n" +
+                 "Update baru belum tersedia karena pengembang fokus pada pengembangan AI, namun upaya tersebut belum berhasil.\n" +
+                 "Terima kasih atas 1000 masukan dan kritik Anda.";
+        },
+        changelog: function() { return changelog(); },
+        // Perintah Advanced:
+        weather: function(args) { return weather(); },
+        news: function(args) { return news(); },
+        todo: function(args) { return todo(args); },
+        reminder: function(args) { return reminder(args); },
+        encrypt: function(args) { return encrypt(args); },
+        decrypt: function(args) { return decrypt(args); },
+        translate: function(args) { return translate(args); },
+        battery: function(args) { return battery(); },
+        storage: function(args) { return storage(); },
+        processes: function(args) { return processes(); },
+        cpuinfo: function(args) { return cpuinfo(); },
+        memusage: function(args) { return memusage(); },
+        network: function(args) { return network(); },
+        disk: function(args) { return disk(); },
+        logs: function(args) { return logs(); },
+        monitor: function(args) { return monitor(); },
+        config: function(args) { return config(); },
+        services: function(args) { return services(); },
+        backup: function(args) { return backup(); },
+        restore: function(args) { return restore(); },
+        update: function(args) { return updateSys(); },
+        shutdown: function(args) { return shutdown(); },
+        reboot: function(args) { return reboot(); },
+        diagnose: function(args) { return diagnose(); }
+      };
+
+      // Changelog function untuk update 3.8 – Model Gg v3 (disesuaikan)
+      function changelog() {
+        return "Changelog OS 3.8 – Model Gg v3:\n" +
+               "- Perbaikan bug input dan auto-scroll\n" +
+               "- Tampilan help advanced diperbaiki dengan format vertikal yang rapi\n" +
+               "- Optimisasi UI dan integrasi 1000 masukan pengguna\n" +
+               "- Pembaruan pesan di perintah about, apology, dan changelog\n" +
+               "- [Perubahan lainnya...]\n" +
+               "Terima kasih atas dukungan dan kritik Anda.";
+      }
+
+      // Penanganan input perintah
+      cmdInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          const input = cmdInput.value.trim();
+          if (input === "") { e.preventDefault(); return; }
+          addLine("user@os3.9:~$ " + input);
+          commandHistory.push(input);
+          historyIndex = commandHistory.length;
+          const args = input.split(" ");
+          const cmd = args.shift().toLowerCase();
+          if (commands.hasOwnProperty(cmd)) {
+            const result = commands[cmd](args);
+            if (result instanceof Promise) {
+              result.then(res => { if (res) addLine(res); });
+            } else {
+              if (result) addLine(result);
+            }
+          } else {
+            addLine("Perintah tidak ditemukan: " + cmd);
+          }
+          cmdInput.value = "";
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          if (historyIndex > 0) {
+            historyIndex--;
+            cmdInput.value = commandHistory[historyIndex];
+          }
+          e.preventDefault();
+        } else if (e.key === 'ArrowDown') {
+          if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            cmdInput.value = commandHistory[historyIndex];
+          } else {
+            historyIndex = commandHistory.length;
+            cmdInput.value = "";
+          }
+          e.preventDefault();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
