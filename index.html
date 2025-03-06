@@ -2,14 +2,14 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>OS 4.0 GG – V3 X2 (Model 4.0)</title>
+  <title>OS 4.6 GG – Model Gg v4.6</title>
   <style>
-    /* Desain OS 4.0 – V3 X2 (Model 4.0): UI modern, responsif, dan ditingkatkan */
+    /* Desain OS 4.6 – Model Gg v4.6: UI modern, responsif, dan halus */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      background: linear-gradient(135deg, #101010, #1f1f1f);
+      background: linear-gradient(135deg, #121212, #1e1e1e);
       font-family: 'Roboto Mono', monospace;
       color: #c0c0c0;
     }
@@ -42,6 +42,11 @@
       margin: 0;
       font-size: 1.3em;
       color: #a0a0a0;
+    }
+    #header .feedback {
+      margin-top: 5px;
+      font-size: 1em;
+      color: #ffcc00;
     }
     #history {
       flex: 1;
@@ -81,17 +86,17 @@
 <body>
   <div id="terminal">
     <div id="header">
-      <h1>OS 4.0 GG</h1>
-      <p>V3 X2 – Model 4.0</p>
+      <h1>OS 4.6 GG</h1>
+      <p>Model Gg v4.6</p>
       <div class="feedback">
-        Update besar ini menghadirkan perbaikan bug, optimisasi maksimal, dan UI yang lebih modern.
+        Update besar: Perbaikan bug, optimisasi performa, dan UI yang lebih halus berdasarkan masukan pengguna.
       </div>
     </div>
     <div id="history">
       <div class="line">Ketik "help" untuk melihat perintah dasar.</div>
     </div>
     <div id="command-line">
-      <span class="prompt">user@os4.0:~$</span>
+      <span class="prompt">user@os4.6:~$</span>
       <input type="text" id="cmdInput" autocomplete="off" placeholder="Ketik perintah..." autofocus>
     </div>
   </div>
@@ -105,7 +110,8 @@
       let historyIndex = 0;
       const startTime = Date.now();
       let todoList = [];
-
+      let inChatMode = false;
+      
       // Fungsi untuk menambahkan baris ke history dan auto-scroll
       function addLine(text) {
         if (text !== "") {
@@ -116,7 +122,7 @@
         }
         terminal.scrollTop = terminal.scrollHeight;
       }
-
+      
       /* --- Fungsi Dasar --- */
       function changeTheme(color) {
         document.body.style.color = color;
@@ -147,7 +153,7 @@
       function randomNumber() { return Math.floor(Math.random() * 101); }
       function ping() { return "Pong!"; }
       function sysinfo() {
-        return "OS: OS 4.0 GG\nBrowser: " + navigator.userAgent +
+        return "OS: OS 4.6 GG\nBrowser: " + navigator.userAgent +
                "\nResolusi: " + window.screen.width + "x" + window.screen.height;
       }
       function time() { return new Date().toLocaleTimeString(); }
@@ -179,11 +185,25 @@
         ];
         return jokes[Math.floor(Math.random() * jokes.length)];
       }
-
-      // Advanced help text (ditampilkan secara vertikal)
+      
+      /* --- Fungsi Chat --- */
+      function processChat(input) {
+        if (input.toLowerCase() === "exit") {
+          inChatMode = false;
+          return "Keluar dari mode Chat.";
+        }
+        const responses = [
+          "ChatBot: Saya sedang belajar, apa kabar?",
+          "ChatBot: Ceritakan lebih lanjut!",
+          "ChatBot: Itu menarik.",
+          "ChatBot: Bisa jelaskan lebih detail?",
+          "ChatBot: Terima kasih telah berbagi."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+      
+      /* --- Advanced Help Text --- */
       const advancedHelpText =
-        "weather    - Info cuaca (wttr.in)\n" +
-        "news       - Berita terkini\n" +
         "todo       - Todo List (add, list, remove)\n" +
         "reminder   - Set reminder [detik] [pesan]\n" +
         "encrypt    - Enkripsi teks\n" +
@@ -206,8 +226,9 @@
         "shutdown   - Matikan sistem\n" +
         "reboot     - Restart sistem\n" +
         "diagnose   - Diagnosa sistem\n" +
-        "changelog  - Tampilkan perubahan versi";
-
+        "changelog  - Tampilkan perubahan versi\n" +
+        "chat       - Masuk ke mode Chat (ketik 'exit' untuk keluar)";
+      
       /* --- Definisi Perintah --- */
       const commands = {
         help: function(args) {
@@ -237,14 +258,15 @@
                  "joke         - Tampilkan lelucon\n" +
                  "apology      - Permintaan maaf dari pengembang\n" +
                  "changelog    - Tampilkan perubahan versi\n" +
+                 "chat         - Masuk ke mode Chat (ketik 'exit' untuk keluar)\n" +
                  "advanced     - Lihat perintah advanced (ketik 'help advanced')";
         },
         about: function() { 
-          return "Simulasi OS berbasis HTML, CSS, dan JavaScript (OS 3.9 GG – V2 X1, Model 3.5).\n" +
-                 "Update besar ini mengintegrasikan perbaikan dan masukan pengguna.\n" +
+          return "Simulasi ini dibuat oleh indie bernama hack dev.\n" +
+                 "Update besar ini merupakan hasil perbaikan berdasarkan 1000 masukan dan kritik.\n" +
                  "Maaf, update baru belum tersedia karena pengembang fokus pada pengembangan AI.";
         },
-        version: function() { return "OS versi 3.9 GG – V2 X1, Model 3.5"; },
+        version: function() { return "OS versi 4.6 GG – V3 X2, Model Gg v4.1"; },
         date: function() { return new Date().toDateString(); },
         time: function() { return time(); },
         calc: function(args) { return calc(args); },
@@ -269,9 +291,14 @@
                  "Terima kasih atas 1000 masukan dan kritik Anda.";
         },
         changelog: function() { return changelog(); },
-        // Perintah Advanced:
-        weather: function(args) { return weather(); },
-        news: function(args) { return news(); },
+        // Perintah Chat:
+        chat: function(args) {
+          inChatMode = true;
+          return "Masuk ke mode Chat. Ketik pesan Anda, dan ketik 'exit' untuk keluar dari mode Chat.";
+        },
+        // Perintah Advanced (news dan weather dinonaktifkan)
+        weather: function(args) { return "Fitur weather dinonaktifkan."; },
+        news: function(args) { return "Fitur news dinonaktifkan."; },
         todo: function(args) { return todo(args); },
         reminder: function(args) { return reminder(args); },
         encrypt: function(args) { return encrypt(args); },
@@ -296,23 +323,35 @@
         diagnose: function(args) { return diagnose(); }
       };
 
-      // Changelog function untuk update 3.8 – Model Gg v3 (disesuaikan)
-      function changelog() {
-        return "Changelog OS 3.8 – Model Gg v3:\n" +
-               "- Perbaikan bug input dan auto-scroll\n" +
-               "- Tampilan help advanced diperbaiki dengan format vertikal yang rapi\n" +
-               "- Optimisasi UI dan integrasi 1000 masukan pengguna\n" +
-               "- Pembaruan pesan di perintah about, apology, dan changelog\n" +
-               "- [Perubahan lainnya...]\n" +
-               "Terima kasih atas dukungan dan kritik Anda.";
-      }
-
-      // Penanganan input perintah
+      // Penanganan input perintah dan mode chat
       cmdInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
           const input = cmdInput.value.trim();
           if (input === "") { e.preventDefault(); return; }
-          addLine("user@os3.9:~$ " + input);
+          
+          // Jika dalam mode chat, proses sebagai pesan chat
+          if (inChatMode) {
+            if (input.toLowerCase() === "exit") {
+              inChatMode = false;
+              addLine("Keluar dari mode Chat.");
+            } else {
+              const responses = [
+                "ChatBot: Saya sedang belajar, apa kabar?",
+                "ChatBot: Ceritakan lebih lanjut!",
+                "ChatBot: Itu menarik.",
+                "ChatBot: Bisa jelaskan lebih detail?",
+                "ChatBot: Terima kasih telah berbagi."
+              ];
+              const response = responses[Math.floor(Math.random() * responses.length)];
+              addLine(response);
+            }
+            cmdInput.value = "";
+            e.preventDefault();
+            return;
+          }
+          
+          // Proses perintah standar
+          addLine("user@os4.1:~$ " + input);
           commandHistory.push(input);
           historyIndex = commandHistory.length;
           const args = input.split(" ");
