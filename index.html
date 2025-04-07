@@ -2,14 +2,14 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>OS 4.6 GG – Model Gg v4.6</title>
+  <title>OS 4.1 GG – V4 X3 (Model 4.1)</title>
   <style>
-    /* Desain OS 4.6 – Model Gg v4.6: UI modern, responsif, dan halus */
+    /* Desain OS 4.0 – V3 X2 (Model 4.0): UI modern, responsif, dan ditingkatkan */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      background: linear-gradient(135deg, #121212, #1e1e1e);
+      background: linear-gradient(135deg, #101010, #1f1f1f);
       font-family: 'Roboto Mono', monospace;
       color: #c0c0c0;
     }
@@ -42,11 +42,6 @@
       margin: 0;
       font-size: 1.3em;
       color: #a0a0a0;
-    }
-    #header .feedback {
-      margin-top: 5px;
-      font-size: 1em;
-      color: #ffcc00;
     }
     #history {
       flex: 1;
@@ -86,18 +81,19 @@
 <body>
   <div id="terminal">
     <div id="header">
-      <h1>OS 4.6 GG</h1>
-      <p>Model Gg v4.6</p>
+      <h1>OS 4.1 GG</h1>
+      <p>V4 X3 – Model 4.1</p>
       <div class="feedback">
-        Update besar: Perbaikan bug, optimisasi performa, dan UI yang lebih halus berdasarkan masukan pengguna.
+        Update besar ini menghadirkan perbaikan bug, optimisasi maksimal, dan UI yang lebih modern.
       </div>
     </div>
     <div id="history">
       <div class="line">Ketik "help" untuk melihat perintah dasar.</div>
     </div>
     <div id="command-line">
-      <span class="prompt">user@os4.6:~$</span>
+      <span class="prompt">user@os4.1:~$</span>
       <input type="text" id="cmdInput" autocomplete="off" placeholder="Ketik perintah..." autofocus>
+      <button id="sendBtn">Kirim</button>
     </div>
   </div>
 
@@ -110,8 +106,8 @@
       let historyIndex = 0;
       const startTime = Date.now();
       let todoList = [];
-      let inChatMode = false;
-      
+      let monitorInterval;
+
       // Fungsi untuk menambahkan baris ke history dan auto-scroll
       function addLine(text) {
         if (text !== "") {
@@ -122,269 +118,181 @@
         }
         terminal.scrollTop = terminal.scrollHeight;
       }
-      
-      /* --- Fungsi Dasar --- */
-      function changeTheme(color) {
-        document.body.style.color = color;
-        return "Tema teks diubah ke " + color;
-      }
-      function changeBg(color) {
-        document.body.style.background = color;
-        return "Background diubah ke " + color;
-      }
-      function calc(args) {
-        if (args.length < 3) return "Usage: calc [num1] [operator] [num2]";
-        const num1 = parseFloat(args[0]), num2 = parseFloat(args[2]);
-        if (isNaN(num1) || isNaN(num2)) return "Error: masukkan angka yang valid.";
-        let result;
-        switch(args[1]) {
-          case '+': result = num1 + num2; break;
-          case '-': result = num1 - num2; break;
-          case '*': case 'x': result = num1 * num2; break;
-          case '/':
-            if (num2 === 0) return "Error: pembagian dengan nol.";
-            result = num1 / num2; break;
-          default: return "Operator tidak dikenali. Operator yang valid: +, -, *, /";
-        }
-        return "Hasil: " + result;
-      }
-      function ls() { return "bin\netc\nhome\nusr\nvar"; }
-      function showHistory() { return commandHistory.length ? commandHistory.join("\n") : "History kosong."; }
-      function randomNumber() { return Math.floor(Math.random() * 101); }
-      function ping() { return "Pong!"; }
-      function sysinfo() {
-        return "OS: OS 4.6 GG\nBrowser: " + navigator.userAgent +
-               "\nResolusi: " + window.screen.width + "x" + window.screen.height;
-      }
-      function time() { return new Date().toLocaleTimeString(); }
-      function uptime() {
-        const seconds = Math.floor((Date.now() - startTime) / 1000);
-        return "Uptime: " + seconds + " detik";
-      }
-      function fortune() {
-        const quotes = [
-          "Keep pushing your limits!",
-          "Every day is a new opportunity.",
-          "Coding is an art.",
-          "Stay positive and code on!",
-          "Debugging is like being the detective in a crime movie."
-        ];
-        return quotes[Math.floor(Math.random() * quotes.length)];
-      }
-      function reverse(args) {
-        if (!args.length) return "Usage: reverse [teks]";
-        return args.join(" ").split("").reverse().join("");
-      }
-      function joke() {
-        const jokes = [
-          "Kenapa programmer tidak pernah kesepian? Karena mereka selalu punya 'array' teman.",
-          "Seorang programmer masuk ke bar dan memesan kopi, bartender bertanya: 'null pointer atau undefined?'",
-          "Kenapa kucing programmer itu pintar? Karena mereka tahu cara meng-catch error.",
-          "Apa persamaan antara coder dan tukang kebun? Keduanya suka debug.",
-          "Programmer itu seperti ninja: mereka bekerja dalam keheningan."
-        ];
-        return jokes[Math.floor(Math.random() * jokes.length)];
-      }
-      
-      /* --- Fungsi Chat --- */
-      function processChat(input) {
-        if (input.toLowerCase() === "exit") {
-          inChatMode = false;
-          return "Keluar dari mode Chat.";
-        }
-        const responses = [
-          "ChatBot: Saya sedang belajar, apa kabar?",
-          "ChatBot: Ceritakan lebih lanjut!",
-          "ChatBot: Itu menarik.",
-          "ChatBot: Bisa jelaskan lebih detail?",
-          "ChatBot: Terima kasih telah berbagi."
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
-      }
-      
-      /* --- Advanced Help Text --- */
-      const advancedHelpText =
-        "todo       - Todo List (add, list, remove)\n" +
-        "reminder   - Set reminder [detik] [pesan]\n" +
-        "encrypt    - Enkripsi teks\n" +
-        "decrypt    - Dekripsi teks\n" +
-        "translate  - Penerjemahan teks\n" +
-        "battery    - Status baterai\n" +
-        "storage    - Info penyimpanan\n" +
-        "processes  - Daftar proses berjalan\n" +
-        "cpuinfo    - Info CPU detail\n" +
-        "memusage   - Penggunaan memori\n" +
-        "network    - Info jaringan\n" +
-        "disk       - Info disk\n" +
-        "logs       - Log sistem\n" +
-        "monitor    - Monitor sistem\n" +
-        "config     - Konfigurasi sistem\n" +
-        "services   - Layanan berjalan\n" +
-        "backup     - Backup data\n" +
-        "restore    - Pemulihan data\n" +
-        "update     - Update sistem\n" +
-        "shutdown   - Matikan sistem\n" +
-        "reboot     - Restart sistem\n" +
-        "diagnose   - Diagnosa sistem\n" +
-        "changelog  - Tampilkan perubahan versi\n" +
-        "chat       - Masuk ke mode Chat (ketik 'exit' untuk keluar)";
-      
-      /* --- Definisi Perintah --- */
+
+      // Deklarasi variabel commands di bagian atas
       const commands = {
         help: function(args) {
-          if (args.length > 0 && (args[0].toLowerCase() === "advanced" || args[0].toLowerCase() === "full")) {
-            return "Perintah Advanced:\n" + advancedHelpText;
-          }
-          return "Perintah Dasar:\n" +
-                 "help         - Tampilkan perintah dasar\n" +
-                 "about        - Info OS\n" +
+          return "Daftar Perintah:\n" +
+                 "help         - Tampilkan daftar perintah\n" +
+                 "about        - Info tentang OS\n" +
                  "version      - Versi OS\n" +
-                 "date         - Tampilkan tanggal\n" +
-                 "time         - Tampilkan waktu\n" +
-                 "calc         - Kalkulator sederhana\n" +
-                 "ls           - List direktori\n" +
-                 "theme        - Ubah warna teks\n" +
-                 "bg           - Ubah background\n" +
-                 "echo         - Tampilkan pesan\n" +
-                 "history      - Tampilkan riwayat perintah\n" +
-                 "clear/cls    - Bersihkan layar\n" +
+                 "date         - Tampilkan tanggal saat ini\n" +
+                 "time         - Tampilkan waktu saat ini\n" +
+                 "analytics    - Tampilkan analitik sistem (memori, waktu aktif, dll.)\n" +
+                 "sysinfo      - Info sistem (browser, resolusi layar, dll.)\n" +
+                 "monitor      - Pantau analitik real-time\n" +
+                 "stopmonitor  - Hentikan monitoring real-time\n" +
+                 "clear/cls    - Bersihkan layar terminal\n" +
                  "credits      - Info pembuat OS\n" +
                  "reverse      - Membalikkan teks\n" +
-                 "rand         - Angka acak\n" +
-                 "ping         - Uji koneksi\n" +
-                 "sysinfo      - Info sistem\n" +
-                 "fortune      - Kutipan motivasi\n" +
+                 "rand         - Menghasilkan angka acak\n" +
+                 "ping         - Uji koneksi (respon: Pong!)\n" +
                  "uptime       - Waktu aktif OS\n" +
-                 "joke         - Tampilkan lelucon\n" +
-                 "apology      - Permintaan maaf dari pengembang\n" +
-                 "changelog    - Tampilkan perubahan versi\n" +
-                 "chat         - Masuk ke mode Chat (ketik 'exit' untuk keluar)\n" +
-                 "advanced     - Lihat perintah advanced (ketik 'help advanced')";
+                 "joke         - Tampilkan lelucon acak\n" +
+                 "encrypt      - Mengenkripsi teks (Base64)\n" +
+                 "decrypt      - Mendekripsi teks (Base64)\n" +
+                 "changelog    - Tampilkan daftar perubahan OS\n" +
+                 "log          - Tampilkan riwayat perintah.";
         },
-        about: function() { 
-          return "Simulasi ini dibuat oleh indie bernama hack dev.\n" +
-                 "Update besar ini merupakan hasil perbaikan berdasarkan 1000 masukan dan kritik.\n" +
-                 "Maaf, update baru belum tersedia karena pengembang fokus pada pengembangan AI.";
+        about: function() {
+          return "Simulasi OS berbasis HTML, CSS, dan JavaScript.";
         },
-        version: function() { return "OS versi 4.6 GG – V3 X2, Model Gg v4.1"; },
+        version: function() { return "OS versi 4.1 GG – V4 X3 (Model 4.1)"; },
         date: function() { return new Date().toDateString(); },
-        time: function() { return time(); },
-        calc: function(args) { return calc(args); },
-        ls: function() { return ls(); },
-        theme: function(args) { return args.length ? changeTheme(args[0]) : "Usage: theme [color]"; },
-        bg: function(args) { return args.length ? changeBg(args[0]) : "Usage: bg [color]"; },
-        echo: function(args) { return args.join(" "); },
-        history: function() { return showHistory(); },
+        time: function() { return new Date().toLocaleTimeString(); },
         clear: function() { historyContainer.innerHTML = ""; return ""; },
         cls: function() { return commands.clear(); },
-        credits: function() { return "Hack dev 2223 credits"; },
-        reverse: function(args) { return reverse(args); },
-        rand: function() { return "Angka acak: " + randomNumber(); },
-        ping: function() { return ping(); },
-        sysinfo: function() { return sysinfo(); },
-        fortune: function() { return fortune(); },
-        uptime: function() { return uptime(); },
-        joke: function() { return joke(); },
-        apology: function() {
-          return "Kami mohon maaf kepada seluruh pengguna.\n" +
-                 "Update baru belum tersedia karena pengembang fokus pada pengembangan AI, namun upaya tersebut belum berhasil.\n" +
-                 "Terima kasih atas 1000 masukan dan kritik Anda.";
+        credits: function() { return "XOBE DEVELOPMENT"; },
+        reverse: function(args) {
+          if (!args.length) return "Usage: reverse [teks]";
+          return args.join(" ").split("").reverse().join("");
         },
-        changelog: function() { return changelog(); },
-        // Perintah Chat:
-        chat: function(args) {
-          inChatMode = true;
-          return "Masuk ke mode Chat. Ketik pesan Anda, dan ketik 'exit' untuk keluar dari mode Chat.";
+        rand: function() { return "Angka acak: " + Math.floor(Math.random() * 101); },
+        ping: function() { return "Pong!"; },
+        sysinfo: function() {
+          return `Informasi Sistem:\n` +
+                 `- OS: OS 4.1 GG\n` +
+                 `- Browser: ${navigator.userAgent}\n` +
+                 `- Resolusi Layar: ${window.screen.width}x${window.screen.height}\n` +
+                 `- Bahasa: ${navigator.language}\n` +
+                 `- Platform: ${navigator.platform}`;
         },
-        // Perintah Advanced (news dan weather dinonaktifkan)
-        weather: function(args) { return "Fitur weather dinonaktifkan."; },
-        news: function(args) { return "Fitur news dinonaktifkan."; },
-        todo: function(args) { return todo(args); },
-        reminder: function(args) { return reminder(args); },
-        encrypt: function(args) { return encrypt(args); },
-        decrypt: function(args) { return decrypt(args); },
-        translate: function(args) { return translate(args); },
-        battery: function(args) { return battery(); },
-        storage: function(args) { return storage(); },
-        processes: function(args) { return processes(); },
-        cpuinfo: function(args) { return cpuinfo(); },
-        memusage: function(args) { return memusage(); },
-        network: function(args) { return network(); },
-        disk: function(args) { return disk(); },
-        logs: function(args) { return logs(); },
-        monitor: function(args) { return monitor(); },
-        config: function(args) { return config(); },
-        services: function(args) { return services(); },
-        backup: function(args) { return backup(); },
-        restore: function(args) { return restore(); },
-        update: function(args) { return updateSys(); },
-        shutdown: function(args) { return shutdown(); },
-        reboot: function(args) { return reboot(); },
-        diagnose: function(args) { return diagnose(); }
+        uptime: function() {
+          const seconds = Math.floor((Date.now() - startTime) / 1000);
+          return "Uptime: " + seconds + " detik";
+        },
+        joke: function() {
+          const jokes = [
+            "Kenapa programmer tidak pernah kesepian? Karena mereka selalu punya 'array' teman.",
+            "Seorang programmer masuk ke bar dan memesan kopi, bartender bertanya: 'null pointer atau undefined?'",
+            "Kenapa kucing programmer itu pintar? Karena mereka tahu cara meng-catch error.",
+            "Apa persamaan antara coder dan tukang kebun? Keduanya suka debug.",
+            "Programmer itu seperti ninja: mereka bekerja dalam keheningan."
+          ];
+          return jokes[Math.floor(Math.random() * jokes.length)];
+        },
+        encrypt: function(args) {
+          if (!args.length) return "Usage: encrypt [teks]\nDeskripsi: Mengenkripsi teks menggunakan algoritma Base64.";
+          const text = args.join(" ");
+          return `Hasil Enkripsi:\n${btoa(text)}`;
+        },
+        decrypt: function(args) {
+          if (!args.length) return "Usage: decrypt [teks]\nDeskripsi: Mendekripsi teks yang telah dienkripsi dengan algoritma Base64.";
+          const text = args.join(" ");
+          try {
+            return `Hasil Dekripsi:\n${atob(text)}`;
+          } catch (e) {
+            return "Error: Teks tidak valid untuk dekripsi.";
+          }
+        },
+        analytics: function() {
+          const memory = performance.memory || {};
+          const usedJSHeap = memory.usedJSHeapSize ? (memory.usedJSHeapSize / 1048576).toFixed(2) + " MB" : "Tidak tersedia";
+          const totalJSHeap = memory.totalJSHeapSize ? (memory.totalJSHeapSize / 1048576).toFixed(2) + " MB" : "Tidak tersedia";
+          const jsHeapLimit = memory.jsHeapSizeLimit ? (memory.jsHeapSizeLimit / 1048576).toFixed(2) + " MB" : "Tidak tersedia";
+
+          return `Analitik Sistem:\n` +
+                 `Penggunaan Memori JavaScript:\n` +
+                 `- Memori yang digunakan: ${usedJSHeap}\n` +
+                 `- Total memori heap: ${totalJSHeap}\n` +
+                 `- Batas memori heap: ${jsHeapLimit}\n` +
+                 `Waktu Aktif: ${Math.floor((Date.now() - startTime) / 1000)} detik\n` +
+                 `Resolusi Layar: ${window.screen.width}x${window.screen.height}`;
+        },
+        monitor: function(args) {
+          const interval = args[0] ? parseInt(args[0], 10) : 1000; // Default 1 detik
+          if (isNaN(interval) || interval <= 0) return "Usage: monitor [interval(ms)]";
+
+          if (monitorInterval) clearInterval(monitorInterval);
+
+          monitorInterval = setInterval(() => {
+            const memory = performance.memory || {};
+            const usedJSHeap = memory.usedJSHeapSize ? (memory.usedJSHeapSize / 1048576).toFixed(2) + " MB" : "Tidak tersedia";
+            const totalJSHeap = memory.totalJSHeapSize ? (memory.totalJSHeapSize / 1048576).toFixed(2) + " MB" : "Tidak tersedia";
+
+            addLine(`Real-Time Analytics:\n` +
+                    `- Memori yang digunakan: ${usedJSHeap}\n` +
+                    `- Total memori heap: ${totalJSHeap}\n` +
+                    `- Waktu Aktif: ${Math.floor((Date.now() - startTime) / 1000)} detik`);
+          }, interval);
+
+          return `Monitoring dimulai dengan interval ${interval} ms. Ketik "stopmonitor" untuk berhenti.`;
+        },
+        stopmonitor: function() {
+          if (monitorInterval) {
+            clearInterval(monitorInterval);
+            monitorInterval = null;
+            return "Monitoring dihentikan.";
+          }
+          return "Monitoring tidak aktif.";
+        },
+        changelog: function() {
+          return `Changelog OS 4.1 GG:\n` +
+                 `- Penambahan fitur enkripsi dan dekripsi teks.\n` +
+                 `- Perbaikan bug pada analitik sistem.\n` +
+                 `- Optimisasi performa UI.\n` +
+                 `- Penambahan fitur monitoring real-time.\n` +
+                 `- Desain terminal yang lebih modern.`;
+        },
+        log: function() {
+          if (commandHistory.length === 0) return "Tidak ada perintah yang dijalankan.";
+          return `Riwayat Perintah:\n` + commandHistory.join("\n");
+        }
       };
 
-      // Penanganan input perintah dan mode chat
+      // Penanganan input perintah
       cmdInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-          const input = cmdInput.value.trim();
-          if (input === "") { e.preventDefault(); return; }
-          
-          // Jika dalam mode chat, proses sebagai pesan chat
-          if (inChatMode) {
-            if (input.toLowerCase() === "exit") {
-              inChatMode = false;
-              addLine("Keluar dari mode Chat.");
-            } else {
-              const responses = [
-                "ChatBot: Saya sedang belajar, apa kabar?",
-                "ChatBot: Ceritakan lebih lanjut!",
-                "ChatBot: Itu menarik.",
-                "ChatBot: Bisa jelaskan lebih detail?",
-                "ChatBot: Terima kasih telah berbagi."
-              ];
-              const response = responses[Math.floor(Math.random() * responses.length)];
-              addLine(response);
-            }
-            cmdInput.value = "";
-            e.preventDefault();
-            return;
-          }
-          
-          // Proses perintah standar
-          addLine("user@os4.1:~$ " + input);
-          commandHistory.push(input);
-          historyIndex = commandHistory.length;
-          const args = input.split(" ");
-          const cmd = args.shift().toLowerCase();
-          if (commands.hasOwnProperty(cmd)) {
-            const result = commands[cmd](args);
-            if (result instanceof Promise) {
-              result.then(res => { if (res) addLine(res); });
-            } else {
-              if (result) addLine(result);
-            }
-          } else {
-            addLine("Perintah tidak ditemukan: " + cmd);
-          }
-          cmdInput.value = "";
           e.preventDefault();
-        } else if (e.key === 'ArrowUp') {
-          if (historyIndex > 0) {
-            historyIndex--;
-            cmdInput.value = commandHistory[historyIndex];
-          }
-          e.preventDefault();
-        } else if (e.key === 'ArrowDown') {
-          if (historyIndex < commandHistory.length - 1) {
-            historyIndex++;
-            cmdInput.value = commandHistory[historyIndex];
-          } else {
-            historyIndex = commandHistory.length;
-            cmdInput.value = "";
-          }
-          e.preventDefault();
+          processCommand();
         }
       });
+
+      document.getElementById('sendBtn').addEventListener('click', function() {
+        processCommand();
+      });
+
+      function processCommand() {
+        const input = cmdInput.value.trim();
+        if (input === "") return;
+
+        addLine("user@os4.1:~$ " + input);
+        commandHistory.push(input);
+        historyIndex = commandHistory.length;
+
+        const args = input.split(" ");
+        const cmd = args.shift().toLowerCase();
+
+        if (commands.hasOwnProperty(cmd)) {
+          const result = commands[cmd](args);
+          if (result instanceof Promise) {
+            result.then(res => { if (res) addLine(res); });
+          } else {
+            if (result) addLine(result);
+          }
+        } else {
+          addLine("Perintah tidak ditemukan: " + cmd);
+        }
+
+        cmdInput.value = "";
+      }
+
+      // Pastikan input selalu fokus
+      document.addEventListener('click', function() {
+        cmdInput.focus();
+      });
+
+      cmdInput.focus();
     })();
   </script>
 </body>
