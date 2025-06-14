@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>OS 4.1 GG – V4 X3 (Model 4.1)</title>
+  <title>OS 4.2 GG – V5 X4 (Model 4.5)</title>
   <style>
     /* Desain OS 4.0 – V3 X2 (Model 4.0): UI modern, responsif, dan ditingkatkan */
     html, body {
@@ -81,17 +81,17 @@
 <body>
   <div id="terminal">
     <div id="header">
-      <h1>OS 4.1 GG</h1>
-      <p>V4 X3 – Model 4.1</p>
+      <h1>OS 4.2 GG</h1>
+      <p>V5 X4 – Model 4.5</p>
       <div class="feedback">
-        Update besar ini menghadirkan perbaikan bug, optimisasi maksimal, dan UI yang lebih modern.
+        Update besar: bugfix, optimisasi maksimal, fitur monitor 100% bekerja, dan semua fitur stabil.
       </div>
     </div>
     <div id="history">
       <div class="line">Ketik "help" untuk melihat perintah dasar.</div>
     </div>
     <div id="command-line">
-      <span class="prompt">user@os4.1:~$</span>
+      <span class="prompt">user@os4.2:~$</span>
       <input type="text" id="cmdInput" autocomplete="off" placeholder="Ketik perintah..." autofocus>
       <button id="sendBtn">Kirim</button>
     </div>
@@ -105,7 +105,6 @@
       let commandHistory = [];
       let historyIndex = 0;
       const startTime = Date.now();
-      let todoList = [];
       let monitorInterval;
 
       // Fungsi untuk menambahkan baris ke history dan auto-scroll
@@ -116,10 +115,10 @@
           line.textContent = text;
           historyContainer.appendChild(line);
         }
-        terminal.scrollTop = terminal.scrollHeight;
+        historyContainer.scrollTop = historyContainer.scrollHeight;
       }
 
-      // Deklarasi variabel commands di bagian atas
+      // Semua fitur OS 4.2 GG – V5 X4 (Model 4.5)
       const commands = {
         help: function(args) {
           return "Daftar Perintah:\n" +
@@ -147,7 +146,7 @@
         about: function() {
           return "Simulasi OS berbasis HTML, CSS, dan JavaScript.";
         },
-        version: function() { return "OS versi 4.1 GG – V4 X3 (Model 4.1)"; },
+        version: function() { return "OS versi 4.2 GG – V5 X4 (Model 4.5)"; },
         date: function() { return new Date().toDateString(); },
         time: function() { return new Date().toLocaleTimeString(); },
         clear: function() { historyContainer.innerHTML = ""; return ""; },
@@ -161,7 +160,7 @@
         ping: function() { return "Pong!"; },
         sysinfo: function() {
           return `Informasi Sistem:\n` +
-                 `- OS: OS 4.1 GG\n` +
+                 `- OS: OS 4.2 GG\n` +
                  `- Browser: ${navigator.userAgent}\n` +
                  `- Resolusi Layar: ${window.screen.width}x${window.screen.height}\n` +
                  `- Bahasa: ${navigator.language}\n` +
@@ -184,13 +183,17 @@
         encrypt: function(args) {
           if (!args.length) return "Usage: encrypt [teks]\nDeskripsi: Mengenkripsi teks menggunakan algoritma Base64.";
           const text = args.join(" ");
-          return `Hasil Enkripsi:\n${btoa(text)}`;
+          try {
+            return `Hasil Enkripsi:\n${btoa(unescape(encodeURIComponent(text)))}`;
+          } catch (e) {
+            return "Error: Teks tidak valid untuk dienkripsi.";
+          }
         },
         decrypt: function(args) {
           if (!args.length) return "Usage: decrypt [teks]\nDeskripsi: Mendekripsi teks yang telah dienkripsi dengan algoritma Base64.";
           const text = args.join(" ");
           try {
-            return `Hasil Dekripsi:\n${atob(text)}`;
+            return `Hasil Dekripsi:\n${decodeURIComponent(escape(atob(text)))}`;
           } catch (e) {
             return "Error: Teks tidak valid untuk dekripsi.";
           }
@@ -219,11 +222,17 @@
             const memory = performance.memory || {};
             const usedJSHeap = memory.usedJSHeapSize ? (memory.usedJSHeapSize / 1048576).toFixed(2) + " MB" : "Tidak tersedia";
             const totalJSHeap = memory.totalJSHeapSize ? (memory.totalJSHeapSize / 1048576).toFixed(2) + " MB" : "Tidak tersedia";
+            const jsHeapLimit = memory.jsHeapSizeLimit ? (memory.jsHeapSizeLimit / 1048576).toFixed(2) + " MB" : "Tidak tersedia";
+            const uptime = Math.floor((Date.now() - startTime) / 1000);
 
-            addLine(`Real-Time Analytics:\n` +
-                    `- Memori yang digunakan: ${usedJSHeap}\n` +
-                    `- Total memori heap: ${totalJSHeap}\n` +
-                    `- Waktu Aktif: ${Math.floor((Date.now() - startTime) / 1000)} detik`);
+            addLine(
+              `Real-Time Analytics:\n` +
+              `- Memori yang digunakan: ${usedJSHeap}\n` +
+              `- Total memori heap: ${totalJSHeap}\n` +
+              `- Batas memori heap: ${jsHeapLimit}\n` +
+              `- Waktu Aktif: ${uptime} detik\n` +
+              `- Resolusi Layar: ${window.screen.width}x${window.screen.height}`
+            );
           }, interval);
 
           return `Monitoring dimulai dengan interval ${interval} ms. Ketik "stopmonitor" untuk berhenti.`;
@@ -237,12 +246,12 @@
           return "Monitoring tidak aktif.";
         },
         changelog: function() {
-          return `Changelog OS 4.1 GG:\n` +
-                 `- Penambahan fitur enkripsi dan dekripsi teks.\n` +
-                 `- Perbaikan bug pada analitik sistem.\n` +
-                 `- Optimisasi performa UI.\n` +
-                 `- Penambahan fitur monitoring real-time.\n` +
-                 `- Desain terminal yang lebih modern.`;
+          return `Changelog OS 4.2 GG:\n` +
+                 `- Fitur monitor real-time 100% stabil dan akurat\n` +
+                 `- Semua fitur diperbaiki dan dioptimalkan\n` +
+                 `- Bugfix pada enkripsi/dekripsi dan analytics\n` +
+                 `- UI lebih responsif dan modern\n` +
+                 `- Credits: XOBE DEVELOPMENT`;
         },
         log: function() {
           if (commandHistory.length === 0) return "Tidak ada perintah yang dijalankan.";
@@ -255,6 +264,19 @@
         if (e.key === 'Enter') {
           e.preventDefault();
           processCommand();
+        } else if (e.key === 'ArrowUp') {
+          if (commandHistory.length && historyIndex > 0) {
+            historyIndex--;
+            cmdInput.value = commandHistory[historyIndex];
+          }
+        } else if (e.key === 'ArrowDown') {
+          if (commandHistory.length && historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            cmdInput.value = commandHistory[historyIndex];
+          } else if (historyIndex === commandHistory.length - 1) {
+            historyIndex++;
+            cmdInput.value = "";
+          }
         }
       });
 
@@ -266,7 +288,7 @@
         const input = cmdInput.value.trim();
         if (input === "") return;
 
-        addLine("user@os4.1:~$ " + input);
+        addLine("user@os4.2:~$ " + input);
         commandHistory.push(input);
         historyIndex = commandHistory.length;
 
